@@ -1,0 +1,11 @@
+com/liu/test/compile/MemoryJavaFileManager$MemoryInputJavaFileObject.class
+com/liu/test/controller/TestController.class
+com/liu/test/compile/JavaStringCompiler.class
+com/liu/test/compile/service/service.class
+com/liu/test/compile/MemoryClassLoader.class
+com/liu/test/Application.class
+com/liu/test/compile/MemoryJavaFileManager.class
+com/liu/test/compile/on/DynamicInterface.class
+com/liu/test/compile/CustomJavaFileObject.class
+com/liu/test/controller/SpringUtil.class
+com/liu/test/compile/PackageInternalsFinder.class
