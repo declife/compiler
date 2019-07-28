@@ -49,20 +49,20 @@ public class JavaStringCompiler {
 		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, SpringUtil.getBean("service").getClass().getClassLoader())) {
 			System.out.println("cd");
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
-//			List<String> options = new ArrayList<>();
-//			options.addAll(Arrays.asList("-classpath",System.getProperty("java.class.path")));
+			List<String> options = new ArrayList<>();
+			options.addAll(Arrays.asList("-classpath",System.getProperty("java.class.path")));
 //			Iterable options = Arrays.asList("-classpath", "/Users/hyukaliu/Desktop/Git/java/error/target/error-1.0-SNAPSHOT.jar!/BOOT-INF/*");
-			StringBuilder cp = new StringBuilder();
-			URLClassLoader urlClassLoader = (URLClassLoader) SpringUtil.getBean("service").getClass().getClassLoader();
-
-			for (URL url : urlClassLoader.getURLs()) {
-				cp.append(url.getFile()).append(File.pathSeparator);
-			}
-			System.out.println(cp);
-			System.out.println("cp" + System.getProperty("java.class.path"));
-			List<String> options = new ArrayList<String>();
-			options.add("-classpath");
-			options.add(cp.toString());
+//			StringBuilder cp = new StringBuilder();
+//			URLClassLoader urlClassLoader = (URLClassLoader) SpringUtil.getBean("service").getClass().getClassLoader();
+//
+//			for (URL url : urlClassLoader.getURLs()) {
+//				cp.append(url.getFile().substring(5)).append(File.pathSeparator);
+//			}
+//			System.out.println(cp);
+//			System.out.println("cp" + System.getProperty("java.class.path"));
+//			List<String> options = new ArrayList<String>();
+//			options.add("-classpath");
+//			options.add(cp.substring(0,cp.length()-1));
 			CompilationTask task = compiler.getTask(null, manager, null, options, null, Arrays.asList(javaFileObject));
 			Boolean result = task.call();
 			if (result == null || !result.booleanValue()) {
