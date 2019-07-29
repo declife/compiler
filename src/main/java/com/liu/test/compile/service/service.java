@@ -11,7 +11,7 @@ import java.util.Map;
 public class service {
     private final String code = "package com.liu.test.compile.service;\n" +
             "\n" +
-            "import com.liu.test.compile.on.DynamicInterface;\n" +
+            "import com.alibaba.fastjson.JSONObject;import com.liu.test.compile.on.DynamicInterface;\n" +
             "\n" +
             "public class DynamicClass implements DynamicInterface { \n" +
             "\n" +
@@ -26,7 +26,7 @@ public class service {
         try {
             Map<String,byte[]> classBytes = compiler.compile("DynamicClass.java", code);
             System.out.println("编译过了");
-            Class<?> clazz = compiler.loadClass("com.liu.test.compile.service.DynamicClass", classBytes, SpringUtil.getBean("service").getClass().getClassLoader());
+            Class<?> clazz = compiler.loadClass("com.liu.test.compile.service.DynamicClass", classBytes);
             DynamicInterface dynamicInterface = (DynamicInterface) (clazz.getDeclaredConstructor().newInstance());
             return dynamicInterface.hello();
         } catch (Exception e) {

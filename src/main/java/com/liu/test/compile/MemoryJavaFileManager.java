@@ -22,7 +22,7 @@ import javax.tools.JavaFileObject.Kind;
 /**
  * In-memory java file manager.
  *
- * @author michael
+ * @author lxl
  */
 public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
@@ -65,19 +65,19 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
     @Override
     public ClassLoader getClassLoader(Location location) {
         return classLoader;
-        //return super.getClassLoader(location);
+//        return super.getClassLoader(location);
         //	return SpringUtil.getBean("service").getClass().getClassLoader();
     }
 
     @Override
     public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind,
                                                FileObject sibling) throws IOException {
-//		if (kind == Kind.CLASS) {
-//			return new MemoryOutputJavaFileObject(className);
-//		} else {
-//			return super.getJavaFileForOutput(location, className, kind, sibling);
-//		}
-        throw new UnsupportedOperationException();
+		if (kind == Kind.CLASS) {
+			return new MemoryOutputJavaFileObject(className);
+		} else {
+			return super.getJavaFileForOutput(location, className, kind, sibling);
+		}
+//        throw new UnsupportedOperationException();
     }
 
     JavaFileObject makeStringSource(String name, String code) {
@@ -118,7 +118,27 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
             return CharBuffer.wrap(code);
         }
     }
+    class MemoryOutputJavaFileObject extends SimpleJavaFileObject {
+        final String name;
 
+        MemoryOutputJavaFileObject(String name) {
+            super(URI.create("string:///" + name), Kind.CLASS);
+            this.name = name;
+        }
+
+        @Override
+        public OutputStream openOutputStream() {
+            return new FilterOutputStream(new ByteArrayOutputStream()) {
+                @Override
+                public void close() throws IOException {
+                    out.close();
+                    ByteArrayOutputStream bos = (ByteArrayOutputStream) out;
+                    classBytes.put(name, bos.toByteArray());
+                }
+            };
+        }
+
+    }
 
 }
 
@@ -140,6 +160,7 @@ class CustomJavaFileObject implements JavaFileObject {
 
     @Override
     public InputStream openInputStream() throws IOException {
+        System.out.println(uri.toURL().toString());
         return uri.toURL().openStream(); // easy way to handle any URI!
     }
 
@@ -214,25 +235,5 @@ class CustomJavaFileObject implements JavaFileObject {
     }
 }
 
-//	class MemoryOutputJavaFileObject extends SimpleJavaFileObject {
-//		final String name;
-//
-//		MemoryOutputJavaFileObject(String name) {
-//			super(URI.create("string:///" + name), Kind.CLASS);
-//			this.name = name;
-//		}
-//
-//		@Override
-//		public OutputStream openOutputStream() {
-//			return new FilterOutputStream(new ByteArrayOutputStream()) {
-//				@Override
-//				public void close() throws IOException {
-//					out.close();
-//					ByteArrayOutputStream bos = (ByteArrayOutputStream) out;
-//					classBytes.put(name, bos.toByteArray());
-//				}
-//			};
-//		}
-//
-//	}
+
 

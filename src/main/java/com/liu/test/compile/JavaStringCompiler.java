@@ -1,16 +1,9 @@
 package com.liu.test.compile;
 
-import com.liu.test.controller.SpringUtil;
-import org.springframework.util.ClassUtils;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -21,7 +14,7 @@ import javax.tools.JavaCompiler.CompilationTask;
 /**
  * In-memory compile Java source code as String.
  * 
- * @author michael
+ * @author lxl
  */
 public class JavaStringCompiler {
 
@@ -46,7 +39,7 @@ public class JavaStringCompiler {
 	 *             If compile error.
 	 */
 	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
-		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, SpringUtil.getBean("service").getClass().getClassLoader())) {
+		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, Thread.currentThread().getContextClassLoader())) {
 			System.out.println("cd");
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
 			List<String> options = new ArrayList<>();
@@ -56,13 +49,13 @@ public class JavaStringCompiler {
 //			URLClassLoader urlClassLoader = (URLClassLoader) SpringUtil.getBean("service").getClass().getClassLoader();
 //
 //			for (URL url : urlClassLoader.getURLs()) {
-//				cp.append(url.getFile().substring(5)).append(File.pathSeparator);
+//				cp.append(url.getFile()).append(File.pathSeparator);
 //			}
 //			System.out.println(cp);
 //			System.out.println("cp" + System.getProperty("java.class.path"));
 //			List<String> options = new ArrayList<String>();
 //			options.add("-classpath");
-//			options.add(cp.substring(0,cp.length()-1));
+//			options.add(cp.toString());
 			CompilationTask task = compiler.getTask(null, manager, null, options, null, Arrays.asList(javaFileObject));
 			Boolean result = task.call();
 			if (result == null || !result.booleanValue()) {
@@ -89,9 +82,36 @@ public class JavaStringCompiler {
 	 * @throws IOException
 	 *             If load error.
 	 */
-	public Class<?> loadClass(String name, Map<String, byte[]> classBytes, ClassLoader parent) throws ClassNotFoundException, IOException {
-		try (MemoryClassLoader classLoader = new MemoryClassLoader(classBytes, parent)) {
+	public Class<?> loadClass(String name, Map<String, byte[]> classBytes) throws ClassNotFoundException, IOException {
+		try (MemoryClassLoader classLoader = new MemoryClassLoader(classBytes)) {
 			return classLoader.loadClass(name);
 		}
+	}
+
+	private class MemoryClassLoader extends URLClassLoader {
+
+		// class name to class bytes:
+		private Map<String, byte[]> classBytes = new HashMap<String, byte[]>();
+
+		private URLClassLoader parent;
+
+
+		private MemoryClassLoader(Map<String, byte[]> classBytes) {
+			super(new URL[0], MemoryClassLoader.class.getClassLoader());
+			this.classBytes.putAll(classBytes);
+		}
+
+		@Override
+		protected Class<?> findClass(String name) throws ClassNotFoundException {
+			byte[] buf = classBytes.get(name);
+			if (buf == null) {
+				return super.findClass(name);
+			}
+			classBytes.remove(name);
+			return defineClass(name, buf, 0, buf.length);
+		}
+
+
+
 	}
 }

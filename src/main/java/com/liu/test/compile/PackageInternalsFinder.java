@@ -1,6 +1,5 @@
 package com.liu.test.compile;
 
-import com.liu.test.compile.MemoryJavaFileManager;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -15,8 +14,9 @@ import java.net.URI;
 import javax.tools.JavaFileObject;
 
 /**
- * @author atamur
+ * @source_author atamur
  * @since 15-Oct-2009
+ * @author lxl
  */
 class PackageInternalsFinder {
     private static final String CLASS_FILE_EXTENSION = ".class";
@@ -52,18 +52,20 @@ class PackageInternalsFinder {
     private List<JavaFileObject> processJar(URL packageFolderURL) {
         List<JavaFileObject> result = new ArrayList<JavaFileObject>();
         try {
-            String jarUri = packageFolderURL.toExternalForm().split("!")[0];
+//            String jarUri = packageFolderURL.toExternalForm().split("!")[0];
+            String jarUri = packageFolderURL.toExternalForm();
 
             JarURLConnection jarConn = (JarURLConnection) packageFolderURL.openConnection();
             String rootEntryName = jarConn.getEntryName();
             int rootEnd = rootEntryName.length() + 1;
-
+            jarUri = jarUri.substring(0, jarUri.length() - rootEnd + 1);
             Enumeration<JarEntry> entryEnum = jarConn.getJarFile().entries();
             while (entryEnum.hasMoreElements()) {
                 JarEntry jarEntry = entryEnum.nextElement();
                 String name = jarEntry.getName();
                 if (name.startsWith(rootEntryName) && name.indexOf('/', rootEnd) == -1 && name.endsWith(CLASS_FILE_EXTENSION)) {
-                    URI uri = URI.create(jarUri + "!/" + name);
+                    URI uri = URI.create(jarUri.replaceAll("classes!", "classes") + name);
+
                     String binaryName = name.replaceAll("/", ".");
                     binaryName = binaryName.replaceAll(CLASS_FILE_EXTENSION + "$", "");
 
