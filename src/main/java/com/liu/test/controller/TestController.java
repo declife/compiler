@@ -16,6 +16,10 @@ public class TestController {
 
     @RequestMapping(value = "/liu", method = RequestMethod.GET)
     public String hello() {
+        if(SpringUtil.getTomcatClassLoader() == null) {
+            SpringUtil.setTomcatClassLoader(Thread.currentThread().getContextClassLoader());
+            System.out.println(SpringUtil.getTomcatClassLoader());
+        }
         return service.hello();
     }
 

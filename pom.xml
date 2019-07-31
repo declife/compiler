@@ -53,7 +53,11 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.56</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.itranswarp</groupId>
+            <artifactId>compiler</artifactId>
+            <version>1.0</version>
+        </dependency>
 
     </dependencies>
 

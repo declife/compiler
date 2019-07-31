@@ -1,6 +1,5 @@
 package com.liu.test.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -11,8 +10,13 @@ import org.springframework.stereotype.Component;
 public class SpringUtil implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
+    private static ClassLoader classLoader;
+
     public SpringUtil() {
-        JSONObject jsonObject = null;
+    }
+
+    public static Object getBean(String beanName) {
+        return applicationContext != null ? applicationContext.getBean(beanName) : null;
     }
 
     @Override
@@ -20,8 +24,12 @@ public class SpringUtil implements ApplicationContextAware {
         SpringUtil.applicationContext = applicationContext;
     }
 
-    public static Object getBean(String beanName) {
-        return applicationContext != null?applicationContext.getBean(beanName):null;
+    public static ClassLoader getTomcatClassLoader() {
+        return classLoader;
+    }
+
+    public static void setTomcatClassLoader(ClassLoader tomcatClassLoader) {
+        classLoader = tomcatClassLoader;
     }
 }
 

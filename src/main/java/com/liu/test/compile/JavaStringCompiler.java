@@ -1,5 +1,8 @@
 package com.liu.test.compile;
 
+import com.liu.test.controller.SpringUtil;
+import org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoader;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,7 +42,7 @@ public class JavaStringCompiler {
 	 *             If compile error.
 	 */
 	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
-		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, Thread.currentThread().getContextClassLoader())) {
+		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, new TomcatEmbeddedWebappClassLoader())) {
 			System.out.println("cd");
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
 			List<String> options = new ArrayList<>();

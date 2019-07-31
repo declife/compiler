@@ -11,14 +11,14 @@ import java.util.Map;
 public class service {
     private final String code = "package com.liu.test.compile.service;\n" +
             "\n" +
-            "import com.alibaba.fastjson.JSONObject;import com.liu.test.compile.on.DynamicInterface;\n" +
+            "import com.alibaba.fastjson.JSONObject;import com.liu.test.compile.on.DynamicInterface;import java.util.Map;\n" +
             "\n" +
-            "public class DynamicClass implements DynamicInterface { \n" +
+            "public class DynamicClass implements DynamicInterface {  \n" +
             "\n" +
-            "       @Override                                        \n" +
+            "       @Override                                         \n" +
             "        public String hello() {                          \n" +
             "            return \"Hello,Liu\";                        \n" +
-            "        }                                                 \n" +
+            "        }                                                \n" +
             "}";
 
     public String hello() {
