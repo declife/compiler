@@ -18,7 +18,7 @@ public class TestController {
     public String hello() {
         if(SpringUtil.getTomcatClassLoader() == null) {
             SpringUtil.setTomcatClassLoader(Thread.currentThread().getContextClassLoader());
-            System.out.println(SpringUtil.getTomcatClassLoader());
+//            System.out.println(SpringUtil.getTomcatClassLoader());
         }
         return service.hello();
     }

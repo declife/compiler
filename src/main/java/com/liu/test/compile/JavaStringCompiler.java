@@ -44,11 +44,10 @@ public class JavaStringCompiler {
 	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
 		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, SpringUtil.getTomcatClassLoader())) {
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
-			List<String> options = new ArrayList<>();
-			options.addAll(Arrays.asList("-classpath",System.getProperty("java.class.path")));
+            List<String> options = new ArrayList<>(Arrays.asList("-classpath", System.getProperty("java.class.path")));
 			CompilationTask task = compiler.getTask(null, manager, null, options, null, Arrays.asList(javaFileObject));
 			Boolean result = task.call();
-			if (result == null || !result.booleanValue()) {
+			if (result == null || !result) {
 				throw new RuntimeException("Compilation failed.");
 			}
 			return manager.getClassBytes();
@@ -100,8 +99,6 @@ public class JavaStringCompiler {
 			classBytes.remove(name);
 			return defineClass(name, buf, 0, buf.length);
 		}
-
-
 
 	}
 }
