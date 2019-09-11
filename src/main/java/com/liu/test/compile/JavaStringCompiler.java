@@ -42,23 +42,10 @@ public class JavaStringCompiler {
 	 *             If compile error.
 	 */
 	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
-		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, new TomcatEmbeddedWebappClassLoader())) {
-			System.out.println("cd");
+		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager, SpringUtil.getTomcatClassLoader())) {
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
 			List<String> options = new ArrayList<>();
 			options.addAll(Arrays.asList("-classpath",System.getProperty("java.class.path")));
-//			Iterable options = Arrays.asList("-classpath", "/Users/hyukaliu/Desktop/Git/java/error/target/error-1.0-SNAPSHOT.jar!/BOOT-INF/*");
-//			StringBuilder cp = new StringBuilder();
-//			URLClassLoader urlClassLoader = (URLClassLoader) SpringUtil.getBean("service").getClass().getClassLoader();
-//
-//			for (URL url : urlClassLoader.getURLs()) {
-//				cp.append(url.getFile()).append(File.pathSeparator);
-//			}
-//			System.out.println(cp);
-//			System.out.println("cp" + System.getProperty("java.class.path"));
-//			List<String> options = new ArrayList<String>();
-//			options.add("-classpath");
-//			options.add(cp.toString());
 			CompilationTask task = compiler.getTask(null, manager, null, options, null, Arrays.asList(javaFileObject));
 			Boolean result = task.call();
 			if (result == null || !result.booleanValue()) {
